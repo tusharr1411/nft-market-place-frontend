@@ -1,0 +1,1 @@
+we have to donload the frpc for wsl and then set it up for hardhat.
