@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import Head from "next/head";
+import { useMoralisQuery } from "react-moralis";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-
     //--------------------------------------------------------------------------------------------------------------------------
 
     // emmited events can be accessed by offchain servieces
@@ -25,14 +25,32 @@ export default function Home() {
     // Local development
 
     //-----------------------------------------------------------------------------------------
-
-
-
+    const { data: listedNfts, isFetching: fetchingListedNfts } = useMoralisQuery(
+        "ActiveItem", //tableName
+        //function for the Query
+        (query) => query.limit(10).descending("tokenId") // grabing first 10 in descending order of tokenId
+    );
+    console.log(listedNfts);
 
     return (
-        <div>
-
-            Hi
-        </div>
+        <>
+            <div>
+                {fetchingListedNfts ? (
+                    <div> Loading...</div>
+                ) : (
+                    listedNfts.map((nft) => {
+                        console.log(nft.attributes);
+                        const { price, nftAddress, tokenId, marketplaceAddress, seller } =
+                            nft.attributes;
+                        return (
+                            <div>
+                                Price: {price}. NftAddress: {nftAddress}. TokenId: {tokenId}.
+                                Seller: {seller}.
+                            </div>
+                        );
+                    })
+                )}
+            </div>
+        </>
     );
 }
