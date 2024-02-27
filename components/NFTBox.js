@@ -5,6 +5,7 @@ import nftAbi from "../constants/BasicNFT.json";
 import Image from "next/image";
 import { Card } from "web3uikit";
 import ethers from "ethers";
+import UpdateListingModal from "./UpdateListingModal";
 
 const truncatString = (fullString, stringLength) => {
     if (fullString.length <= stringLength) return fullString;
@@ -25,6 +26,10 @@ export default function NFTBox({ price, nftAddress, tokenId, marketplaceAddress,
     const [imageURI, setImageURI] = useState("");
     const [tokenName, setTokenName] = useState("");
     const [tokenDescription, setTokenDescription] = useState("");
+    const [showModal, setShowModal] = useState(false);
+    const hideModal = ()=>setShowModal(false);
+
+
     const { runContractFunction: getTokenURI } = useWeb3Contract({
         abi: nftAbi,
         contractAddress: nftAddress,
@@ -33,6 +38,10 @@ export default function NFTBox({ price, nftAddress, tokenId, marketplaceAddress,
             tokenId: tokenId,
         },
     });
+
+    const {runContractFunction: buyItem} = useWeb3Contract({
+        abi:nftMarketPlace
+    })
 
     async function updateUI() {
         // to get image we need tokenURI,
@@ -66,29 +75,46 @@ export default function NFTBox({ price, nftAddress, tokenId, marketplaceAddress,
 
     const isOwnedByUser = seller === account || seller === undefined;
     const formatedSellerAddress = isOwnedByUser ? "You" : truncatString(seller || "", 15);
+
+    const handleCardClick = () => {
+        isOwnedByUser ? setShowModal(true) : console.log("let's buy");
+    };
     return (
         <div>
             <div>
                 {imageURI ? (
-                    <Card title={tokenName} description={tokenDescription}>
-                        <div className="p-2">
-                            <div className="flex flex-col items-end gap-2">
-                                <div> #{tokenId}</div>
-                                <div className="italic text-sm">
-                                    Owned by {formatedSellerAddress}{" "}
-                                </div>
-                                <Image
-                                    loader={() => imageURI}
-                                    src={imageURI}
-                                    height="200"
-                                    width="200"
-                                />
-                                <div className="font-bold">
-                                    {ethers.formatUnits(price, "ether")} ETH{" "}
+                    <div>
+                        <UpdateListingModal
+                            isVisible={showModal}
+                            tokenId={tokenId}
+                            marketplaceAddress={marketplaceAddress}
+                            nftAddress={nftAddress}
+                            onClose={highModal}
+                        />
+                        <Card
+                            title={tokenName}
+                            description={tokenDescription}
+                            onClick={handleCardClick}
+                        >
+                            <div className="p-2">
+                                <div className="flex flex-col items-end gap-2">
+                                    <div> #{tokenId}</div>
+                                    <div className="italic text-sm">
+                                        Owned by {formatedSellerAddress}{" "}
+                                    </div>
+                                    <Image
+                                        loader={() => imageURI}
+                                        src={imageURI}
+                                        height="200"
+                                        width="200"
+                                    />
+                                    <div className="font-bold">
+                                        {ethers.formatUnits(price, "ether")} ETH{" "}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </Card>
+                        </Card>
+                    </div>
                 ) : (
                     <div> Loading ...</div>
                 )}
