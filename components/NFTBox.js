@@ -3,7 +3,7 @@ import { useWeb3Contract, useMoralis } from "react-moralis";
 import { nftMarketplaceAbi } from "../constants/NftMarketPlace.json";
 import nftAbi from "../constants/BasicNFT.json";
 import Image from "next/image";
-import { Card } from "web3uikit";
+import { Card, useNotification } from "web3uikit";
 import ethers from "ethers";
 import UpdateListingModal from "./UpdateListingModal";
 
@@ -27,8 +27,8 @@ export default function NFTBox({ price, nftAddress, tokenId, marketplaceAddress,
     const [tokenName, setTokenName] = useState("");
     const [tokenDescription, setTokenDescription] = useState("");
     const [showModal, setShowModal] = useState(false);
-    const hideModal = ()=>setShowModal(false);
-
+    const hideModal = () => setShowModal(false);
+    const dispatch = useNotification();
 
     const { runContractFunction: getTokenURI } = useWeb3Contract({
         abi: nftAbi,
@@ -39,9 +39,16 @@ export default function NFTBox({ price, nftAddress, tokenId, marketplaceAddress,
         },
     });
 
-    const {runContractFunction: buyItem} = useWeb3Contract({
-        abi:nftMarketPlace
-    })
+    const { runContractFunction: buyItem } = useWeb3Contract({
+        abi: nftMarketplaceAbi,
+        contractAddress: marketplaceAddress,
+        functionName: "buyItem",
+        msgValue: price,
+        params: {
+            nftAddress: nftAddress,
+            tokenId: tokenId,
+        },
+    });
 
     async function updateUI() {
         // to get image we need tokenURI,
@@ -77,7 +84,21 @@ export default function NFTBox({ price, nftAddress, tokenId, marketplaceAddress,
     const formatedSellerAddress = isOwnedByUser ? "You" : truncatString(seller || "", 15);
 
     const handleCardClick = () => {
-        isOwnedByUser ? setShowModal(true) : console.log("let's buy");
+        isOwnedByUser
+            ? setShowModal(true)
+            : buyItem({
+                  onError: (error) => console.log(error),
+                  onSuccess: () => handleBuyItemSuccess(),
+              });
+    };
+
+    const handleBuyItemSuccess = () => {
+        dispatch({
+            type: "success",
+            message: "Item Bought !",
+            title: "Item Bought",
+            position: "topR",
+        });
     };
     return (
         <div>
@@ -89,7 +110,7 @@ export default function NFTBox({ price, nftAddress, tokenId, marketplaceAddress,
                             tokenId={tokenId}
                             marketplaceAddress={marketplaceAddress}
                             nftAddress={nftAddress}
-                            onClose={highModal}
+                            onClose={hideModal}
                         />
                         <Card
                             title={tokenName}
