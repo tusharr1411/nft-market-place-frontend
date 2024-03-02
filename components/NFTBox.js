@@ -4,19 +4,19 @@ import { nftMarketplaceAbi } from "../constants/NftMarketPlace.json";
 import nftAbi from "../constants/BasicNFT.json";
 import Image from "next/image";
 import { Card, useNotification } from "web3uikit";
-import ethers from "ethers";
+import { ethers } from "ethers"
 import UpdateListingModal from "./UpdateListingModal";
 
 const truncatString = (fullString, stringLength) => {
     if (fullString.length <= stringLength) return fullString;
     const separator = "...";
-    const seperatorLength = separator.length;
-    const charsToShow = stringLength - seperatorLength;
-    const fronChars = Match.ceil(charsToShow / 2);
+    const separatorLength = separator.length;
+    const charsToShow = stringLength - separatorLength;
+    const fronChars = Math.ceil(charsToShow / 2);
     const backChars = Math.floor(charsToShow / 2);
     return (
         fullString.substring(0, fronChars) +
-        seperator +
+        separator +
         fullString.substring(fullString.length - backChars)
     );
 };
@@ -130,7 +130,7 @@ export default function NFTBox({ price, nftAddress, tokenId, marketplaceAddress,
                                         width="200"
                                     />
                                     <div className="font-bold">
-                                        {ethers.formatUnits(price, "ether")} ETH{" "}
+                                        {ethers.formatEther(price)} ETH{" "}
                                     </div>
                                 </div>
                             </div>

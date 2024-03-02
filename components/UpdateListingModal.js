@@ -13,19 +13,18 @@ export default function UpdateListingModal({
 }) {
     const dispatch = useNotification();
     const [priceToUpdateListingWith, setPriceToUpdateListingWith] = useState(0);
-    const handleUpdateListingSuccess = async (tx)=>{
-        await tx.wait(1);
+
+    const handleUpdateListingSuccess = () => {
+        // await tx.wait(1);
         dispatch({
-            type:"success",
+            type: "success",
             message: "Listing Updated",
             title: "Listing updated - please refresh (and move blocks)",
-            position: "topR"
-        })
-        onClose && onClose()
-        setPriceToUpdateListingWith("0")
-
-    }
-
+            position: "topR",
+        });
+        onClose && onClose();
+        setPriceToUpdateListingWith("0");
+    };
 
     const { runContractFunction: updateListing } = useWeb3Contract({
         abi: nftMarketplaceAbi,
@@ -43,12 +42,13 @@ export default function UpdateListingModal({
             isVisible={isVisible}
             onCancel={onClose}
             onCloseButtonPressed={onClose}
-            onOk={()=>{
-            updateListing({
-                onError: (error)=>console.log(error),
-                onSuccess: handleUpdateListingSuccess,
-            })
-        }}
+            onOk={() => {
+                console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+                updateListing({
+                    onError: (error) => console.log(error),
+                    onSuccess: handleUpdateListingSuccess(),
+                });
+            }}
         >
             <Input
                 label="Update listing price in L1 Currency (ETH)"

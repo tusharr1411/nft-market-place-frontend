@@ -3,8 +3,10 @@ import { Inter } from "next/font/google";
 import Head from "next/head";
 import { useMoralisQuery, useMoralis } from "react-moralis";
 import NFTBox from "@/components/NFTBox";
-
+import networkMapping from "../constants/networkMapping.json";
 const inter = Inter({ subsets: ["latin"] });
+import GET_ACTIVE_ITEMS from "@/constants/subgraphQueries";
+import { useQuery } from "@apollo/client";
 
 export default function Home() {
     //--------------------------------------------------------------------------------------------------------------------------
@@ -26,42 +28,43 @@ export default function Home() {
     // Local development
 
     //-----------------------------------------------------------------------------------------
-    const {isWeb3Enabled} = useMoralis()
-    const { data: listedNfts, isFetching: fetchingListedNfts } = useMoralisQuery(
-        "ActiveItem", //tableName
-        //function for the Query
-        (query) => query.limit(10).descending("tokenId") // grabing first 10 in descending order of tokenId
-    );
-    console.log(listedNfts);
+    const { isWeb3Enabled, chainId } = useMoralis();
+    const chainIdString = chainId ? parseInt(chainId).toString() : "31337";
+    const marketplaceAddress = chainId ? networkMapping[chainIdString].NftMarketPlace[0] : null;
+    console.log(`nftnftnft :${marketplaceAddress}`);
+
+    const { loading, error, data: listedNfts } = useQuery(GET_ACTIVE_ITEMS);
 
     return (
         <>
             <div className="container mx-auto">
-                <h1 className="py-4 px-4 font=bold text-2xl"> Recently Listed  </h1>
+                <h1 className="py-4 px-4 font=bold text-2xl"> Recently Listed </h1>
                 <div className="flex flex-wrap">
-                    {
-                        isWeb3Enabled ? (
-                    
-                    
-                    fetchingListedNfts ? (
-                        <div> Loading...</div>
-                    ) : (
-                        listedNfts.map((nft) => {
-                            console.log(nft.attributes);
-                            const { price, nftAddress, tokenId, marketplaceAddress, seller } =
-                                nft.attributes;
-                            return (
-                                <div>
-                                    <NFTBox price={price} nftAddress={nftAddress} tokenId={tokenId} marketplaceAddress={marketplaceAddress} seller={seller} key={`${nftAddress}${tokenId}`}/>
-                                </div>
-                            );
-                        })
+                    {isWeb3Enabled ? (
+                        loading || !listedNfts ? (
+                            <div> Loading...</div>
+                        ) : (
+                            listedNfts.activeItems.map((nft) => {
+                                console.log(nft);
+                                const { price, nftAddress, tokenId, seller } = nft;
+                                return (
+                                    <div>
+                                        <NFTBox
+                                            price={price}
+                                            nftAddress={nftAddress}
+                                            tokenId={tokenId}
+                                            marketplaceAddress={marketplaceAddress}
+                                            seller={seller}
+                                            key={`${nftAddress}${tokenId}`}
+                                        />
+                                    </div>
+                                );
+                            })
                         )
-                    ) :(
+                    ) : (
                         <div> Web3 currently not enabled</div>
-                    )
-                    }
-                 </div> 
+                    )}
+                </div>
             </div>
         </>
     );
