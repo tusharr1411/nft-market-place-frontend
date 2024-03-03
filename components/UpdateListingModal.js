@@ -1,7 +1,7 @@
 import { Modal, Input, useNotification } from "web3uikit";
 import { useState } from "react";
 import { useWeb3Contract } from "react-moralis";
-import { nftMarketplaceAbi } from "../constants/NftMarketPlace.json";
+import  nftMarketplaceAbi  from "../constants/NftMarketPlace.json";
 import { ethers } from "ethers";
 
 export default function UpdateListingModal({
@@ -23,9 +23,7 @@ export default function UpdateListingModal({
         })
         onClose && onClose()
         setPriceToUpdateListingWith("0")
-
-    }
-
+    };
 
     const { runContractFunction: updateListing } = useWeb3Contract({
         abi: nftMarketplaceAbi,
