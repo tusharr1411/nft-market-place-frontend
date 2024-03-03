@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { useWeb3Contract, useMoralis } from "react-moralis";
-import { nftMarketplaceAbi } from "../constants/NftMarketPlace.json";
+import nftMarketplaceAbi from "../constants/NftMarketPlace.json";
 import nftAbi from "../constants/BasicNFT.json";
 import Image from "next/image";
 import { Card, useNotification } from "web3uikit";
 import { ethers } from "ethers";
 import UpdateListingModal from "./UpdateListingModal";
+
+
+
 
 const truncatString = (fullString, stringLength) => {
     if (fullString.length <= stringLength) return fullString;
@@ -14,12 +17,11 @@ const truncatString = (fullString, stringLength) => {
     const charsToShow = stringLength - separatorLength;
     const fronChars = Math.ceil(charsToShow / 2);
     const backChars = Math.floor(charsToShow / 2);
-    return (
-        fullString.substring(0, fronChars) +
-        separator +
-        fullString.substring(fullString.length - backChars)
-    );
+    return (fullString.substring(0, fronChars) + separator + fullString.substring(fullString.length - backChars));
 };
+
+
+
 
 export default function NFTBox({ price, nftAddress, tokenId, marketplaceAddress, seller }) {
     const { isWeb3Enabled, account } = useMoralis();
@@ -51,13 +53,10 @@ export default function NFTBox({ price, nftAddress, tokenId, marketplaceAddress,
     });
 
     async function updateUI() {
-        // to get image we need tokenURI,
-        //then imageTag from tokenURI
         const tokenURI = await getTokenURI();
         console.log(`Token URI is : ${tokenURI}`);
 
         if (tokenURI) {
-            //IPFS gateway: A server that will return IPFS files from a "normal" URL( centralized)
             const requestURL = tokenURI.replace("ipfs://", "https://ipfs.io/ipfs/");
             const tokenURIResponse = await (await fetch(requestURL)).json();
             const imageURI = tokenURIResponse.image;
@@ -65,12 +64,6 @@ export default function NFTBox({ price, nftAddress, tokenId, marketplaceAddress,
             setImageURI(imageURIURL);
             setTokenName(tokenURIResponse.name);
             setTokenDescription(tokenURIResponse.description);
-
-            // other possible ways to render image?
-            // 1. we could render the image on our server and just the server
-            // 2. for testnets and mainnet we can use moralis server hooks
-            // 3. Have the world adopt IPFS
-            // 4. Build our own IPFS gateway
         }
     }
 
@@ -100,45 +93,26 @@ export default function NFTBox({ price, nftAddress, tokenId, marketplaceAddress,
             position: "topR",
         });
     };
+
     return (
         <div>
             <div>
-                {imageURI ? (
-                    <div>
-                        <UpdateListingModal
-                            isVisible={showModal}
-                            tokenId={tokenId}
-                            marketplaceAddress={marketplaceAddress}
-                            nftAddress={nftAddress}
-                            onClose={hideModal}
-                        />
-                        <Card
-                            title={tokenName}
-                            description={tokenDescription}
-                            onClick={handleCardClick}
-                        >
+                {imageURI
+                ? (<div>
+                        <UpdateListingModal onClose={hideModal} isVisible={showModal} tokenId={tokenId} marketplaceAddress={marketplaceAddress} nftAddress={nftAddress}/>
+                        <Card title={tokenName} description={tokenDescription} onClick={handleCardClick} >
                             <div className="p-2">
                                 <div className="flex flex-col items-end gap-5">
                                     <div> #{tokenId}</div>
-                                    <div className="italic text-sm">
-                                        Owned by {formatedSellerAddress}{" "}
-                                    </div>
-                                    <Image
-                                        loader={() => imageURI}
-                                        src={imageURI}
-                                        height="200"
-                                        width="200"
-                                    />
-                                    <div className="font-bold">
-                                        {ethers.formatEther(price)} ETH{" "}
-                                    </div>
+                                    <div className="italic text-sm">Owned by {formatedSellerAddress}{" "}</div>
+                                    <Image loader={() => imageURI} src={imageURI} height="200" width="200"/>
+                                    <div className="font-bold"> {ethers.formatEther(price)} ETH{" "} </div>
                                 </div>
                             </div>
                         </Card>
-                    </div>
-                ) : (
-                    <div> Loading ...</div>
-                )}
+                    </div>)
+                : (<div> Loading ...</div>)
+                }
             </div>
         </div>
     );
