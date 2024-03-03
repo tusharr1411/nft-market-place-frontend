@@ -4,7 +4,7 @@ import { nftMarketplaceAbi } from "../constants/NftMarketPlace.json";
 import nftAbi from "../constants/BasicNFT.json";
 import Image from "next/image";
 import { Card, useNotification } from "web3uikit";
-import { ethers } from "ethers"
+import { ethers } from "ethers";
 import UpdateListingModal from "./UpdateListingModal";
 
 const truncatString = (fullString, stringLength) => {
@@ -118,7 +118,7 @@ export default function NFTBox({ price, nftAddress, tokenId, marketplaceAddress,
                             onClick={handleCardClick}
                         >
                             <div className="p-2">
-                                <div className="flex flex-col items-end gap-2">
+                                <div className="flex flex-col items-end gap-5">
                                     <div> #{tokenId}</div>
                                     <div className="italic text-sm">
                                         Owned by {formatedSellerAddress}{" "}

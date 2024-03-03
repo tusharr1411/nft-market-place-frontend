@@ -1,7 +1,7 @@
 import { Modal, Input, useNotification } from "web3uikit";
 import { useState } from "react";
 import { useWeb3Contract } from "react-moralis";
-import { nftMarketplaceAbi } from "../constants/NftMarketPlace.json";
+import nftMarketplaceAbi from "../constants/NftMarketPlace.json";
 import { ethers } from "ethers";
 
 export default function UpdateListingModal({
@@ -14,12 +14,12 @@ export default function UpdateListingModal({
     const dispatch = useNotification();
     const [priceToUpdateListingWith, setPriceToUpdateListingWith] = useState(0);
 
-    const handleUpdateListingSuccess = () => {
-        // await tx.wait(1);
+    const handleUpdateListingSuccess = async (tx) => {
+        await tx.wait(1);
         dispatch({
             type: "success",
             message: "Listing Updated",
-            title: "Listing updated - please refresh (and move blocks)",
+            title: "Listing updated - please refresh the page",
             position: "topR",
         });
         onClose && onClose();
@@ -43,10 +43,9 @@ export default function UpdateListingModal({
             onCancel={onClose}
             onCloseButtonPressed={onClose}
             onOk={() => {
-                console.log("HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
                 updateListing({
                     onError: (error) => console.log(error),
-                    onSuccess: handleUpdateListingSuccess(),
+                    onSuccess: handleUpdateListingSuccess,
                 });
             }}
         >
@@ -57,7 +56,6 @@ export default function UpdateListingModal({
                 onChange={(event) => {
                     setPriceToUpdateListingWith(event.target.value);
                 }}
-                onOk={() => {}}
             />
         </Modal>
     );
