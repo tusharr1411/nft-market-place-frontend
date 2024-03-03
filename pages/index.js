@@ -37,9 +37,9 @@ export default function Home() {
 
     return (
         <>
-            <div className="">
+            <div className="ml-20 mr-20 flex flex-col items-center gap-5 justify-center">
                 <h1 className="py-4 px-4 font=bold text-2xl"> Recently Listed </h1>
-                <div className="flex flex-wrap justify-center">
+                <div className="flex flex-wrap justify">
                     {isWeb3Enabled ? (
                         loading || !listedNfts ? (
                             <div> Loading...</div>
