@@ -48,7 +48,7 @@ export default function Home() {
                                 console.log(nft);
                                 const { price, nftAddress, tokenId, seller } = nft;
                                 return (
-                                    <div>
+                                    <div className="m-4">
                                         <NFTBox
                                             price={price}
                                             nftAddress={nftAddress}
