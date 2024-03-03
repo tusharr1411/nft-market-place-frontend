@@ -2,7 +2,7 @@ import { useQuery, gql } from "@apollo/client";
 
 const GET_ACTIVE_ITEMS = gql`
     {
-        activeItems(first: 5) {
+        activeItems(first: 20) {
             id
             buyer
             seller
