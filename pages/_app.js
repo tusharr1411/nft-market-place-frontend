@@ -7,7 +7,7 @@ import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
 
 const client = new ApolloClient({
     cache: new InMemoryCache(),
-    uri: "https://api.studio.thegraph.com/query/66907/nft-marketplace/v0.0.2",
+    uri: "https://api.studio.thegraph.com/query/66907/nft-marketplace/v0.0.3",
     //centralized https but still all the data is on decentralized graph network
      
 });
