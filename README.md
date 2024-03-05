@@ -4,4 +4,4 @@
 
 ## Project Setup :
 
-* First setup the backend using this [repo](https://github.com/tusharr1411/nft-marketplace/?target=_blank)
+* First setup the backend using this [repo](https://github.com/tusharr1411/nft-marketplace)
